@@ -1,17 +1,29 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 
 const app = express();
+app.use(express.urlencoded({extended: false}));
+app.use(express.json())
 
 const PORT = 3000;
 
-app.get("/", (req, res) => {
-    res.send("hello");
+app.get('/Id/:id/Name/:name', (req: Request, res: Response) => {
+    res.send({
+        message: "hello world",
+        id: req.params.id,
+        name: req.params.name
+    });
 })
 
-app.get("/profile",(req, res) => {
-    res.send("hi channa");
+app.post("/Id/:id/Name/:name", (req: Request, res: Response) => {
+    res.send({
+        data: req.body,
+        params: {
+            id: req.params.id,
+            name: req.params.name
+        }
+    })
 })
 
 app.listen(PORT, () => {
-    console.log(`${PORT}`)
+    console.log(`${PORT}`);
 });
