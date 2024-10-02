@@ -4,17 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const mysql2_1 = __importDefault(require("mysql2"));
+const mysql_1 = __importDefault(require("mysql"));
 const app = (0, express_1.default)();
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.json());
 const PORT = 3000;
 app.get('/details/:id', (req, res) => {
-    var pool = mysql2_1.default.createPool({
+    var pool = mysql_1.default.createPool({
         host: "127.0.0.1",
         user: "root",
-        password: " ",
-        database: "Myconnection",
+        port: 3306,
+        password: "",
+        database: "myconnection",
         connectionLimit: 10,
         multipleStatements: true
     });

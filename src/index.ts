@@ -1,5 +1,6 @@
-import express, { query, Request, Response } from 'express';
-import mysql2 from "mysql2"
+import { doesNotMatch } from 'assert';
+import express, {Request, Response } from 'express';
+import mysql from "mysql"
 
 const app = express();
 app.use(express.urlencoded({extended: false}));
@@ -9,15 +10,17 @@ const PORT = 3000;
 
 app.get('/details/:id', (req: Request, res: Response) => {
     
-    var pool = mysql2.createPool({
+    var pool = mysql.createPool({
         host        : "127.0.0.1",
         user        : "root",
-        password     : " ",
-        database      : "Myconnection",
+        port        :  3306,   
+        password     : "",
+        database      : "mydata",
         connectionLimit    : 10,
         multipleStatements : true
     })
 
+    
 
 
     pool.getConnection(function (err: any, conn : any) {
@@ -33,8 +36,9 @@ app.get('/details/:id', (req: Request, res: Response) => {
             return;
         }
         console.log(`the id: ` + req.params.id);
-        conn.query("SELECT * FROM mydata.actorsdetails_id = ?", [req.params.id], function (err: any, rows : any) {
+        conn.query("SELECT * FROM actorsdetails WHERE id = ?", [req.params.id], function (err: any, rows : any) {
             if(err) {
+                console.log("err", err);
               conn.release();
               return res.send ({
                   success: false,
