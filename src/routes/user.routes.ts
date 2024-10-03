@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
 import mysql from "mysql";
+import bcrypt from "bcrypt";
+// import * as bcrypt from 'bcrypt';
 
 const usersRouter = Router();
 
@@ -87,27 +89,37 @@ usersRouter.post("/register", (req: Request, res: Response) => {
             })
              return;
         }
-        console.log("line 91")
-            console.log(req.body)
-        let sqlQuery = "call registeruser(?, ?)";
 
-        conn.query(sqlQuery, [req.body.email, req.body.password], function(err : any, rows: any) {
-            if(err) {
-                conn.release();
-                return res.send({
-                    success: false,
-                    statusCode: 400,
+         const saltround = 10;
+       
+        bcrypt.hash(req.body.password,saltround, (error : any, hash: string) =>{
+            if(error) {
+                res.send({
+                    success : false,
+                    statusCode: 500,
+                    message: "getting error during the connection"
+                })
+
+                return;
+              } else {
+            let sqlQuery = "call registeruser(?, ?)";
+    
+            conn.query(sqlQuery, [req.body.email, hash], function(err : any, rows: any) {
+                if(err) {
+                    conn.release();
+                    return res.send({
+                        success: false,
+                        statusCode: 400,
+                    });
+                }
+    
+                res.send({
+                    message: "success",
+                    statusCode: 200,
                 });
-            }
-            console.log("line 100")
-            console.log(req.body)
-
-            res.send({
-                message: "success",
-                statusCode: 200,
-            });
-
-            conn.release();
+                conn.release();
+            })
+              }
         })
     })
 
